@@ -10,4 +10,4 @@ docker exec -it postgres bash -c "sed -i '1 i\log_min_error_statement = debug5' 
 sleep 2
 psql "host=127.0.0.1 port=5432 user=postgres password=123456 dbname=postgres" -f init.sql
 pkill odyssey || true
-./odyssey ./config.conf
+# ./odyssey ./config.conf

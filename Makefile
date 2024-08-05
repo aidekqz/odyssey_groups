@@ -17,3 +17,12 @@ run: get_bin
 
 run_test:
 	./test_group.sh
+
+pg_logs:
+	docker logs -f postgres
+
+odyssey_logs:
+	tail -f odyssey.log
+
+restart_odyssey: get_bin
+	pkill odyssey; ./odyssey ./config_group.conf 2>/dev/null
