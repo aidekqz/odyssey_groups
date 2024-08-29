@@ -33,7 +33,8 @@ RUN apt update && apt install -y --no-install-recommends \
     postgresql-common \
     postgresql-server-dev-14
 
-RUN git clone https://github.com/yandex/odyssey.git
+# COPY ./odyssey_repo /odyssey
+RUN git clone https://github.com/yandex/odyssey.git /odyssey
 workdir /odyssey
 RUN sed -i 's/^BUILD_TYPE=Release/BUILD_TYPE=Debug/g' Makefile
 RUN make local_build
