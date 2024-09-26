@@ -1,0 +1,32 @@
+## basedn
+
+dn: ou=people,dc=example,dc=local
+objectClass: organizationalUnit
+ou: people
+
+dn: ou=groups,dc=example,dc=local
+objectClass: organizationalUnit
+ou: groups
+
+## ldapgroups
+
+dn: cn=user2,ou=groups,dc=example,dc=local
+objectClass: posixGroup
+cn: user2
+gidNumber: 2000
+memberUid: user2
+
+
+## ldapusers
+
+dn: uid=user2,ou=people,dc=example,dc=local
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+cn: user2
+sn: user2
+userPassword: {SSHA}eiKQEyKVI+2/GZKbIC00GrMAb422O5mR
+loginShell: /bin/bash
+uidNumber: 2000
+gidNumber: 2000
+homeDirectory: /home/user2

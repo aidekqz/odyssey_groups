@@ -1,5 +1,5 @@
 rsync:
-	./rsync.sh
+	./scripts/rsync.sh
 
 build_odyssey:
 # build_odyssey: get_repo
@@ -16,10 +16,10 @@ get_bin:
 	docker rm --force test_odyssey_tmp
 
 restart_container: get_bin
-	./run_containers.sh
+	./scripts/run_containers.sh
 
 run_test:
-	./test_group.sh
+	./scripts/test_group.sh
 
 pg_logs:
 	docker logs -f postgres
@@ -28,7 +28,7 @@ odyssey_logs:
 	tail -f odyssey.log
 
 restart_odyssey: get_bin
-	pkill odyssey; ./binary/odyssey ./config_group.conf 2>/dev/null
+	pkill odyssey; ./binary/odyssey ./configs/gconfig_group.conf 2>/dev/null
 
 reload_odyssey:
 	kill -s HUP `pgrep odyssey`

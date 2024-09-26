@@ -1,7 +1,7 @@
 # test odyssey groups
 ## prepare
 ```sh
-bash prepare_dep.sh
+./scripts/prepare_dep.sh
 ```
 ## run
 ```sh

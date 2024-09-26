@@ -10,6 +10,7 @@ RUN apt update && apt install -y --no-install-recommends \
     lsb-release \
     ca-certificates \
     libssl-dev \
+    libsasl2-dev \
     libldap-common \
     gnupg \
     openssl \
