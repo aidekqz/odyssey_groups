@@ -15,7 +15,7 @@ get_bin:
 	docker cp test_odyssey_tmp:/odyssey/build/sources/odyssey ./binary/
 	docker rm --force test_odyssey_tmp
 
-restart_container: get_bin
+restart_container:
 	./scripts/run_containers.sh
 
 run_test:
