@@ -33,6 +33,5 @@ restart_odyssey: get_bin
 reload_odyssey:
 	kill -s HUP `pgrep odyssey`
 
-# get_repo:
-# 	rm -rf ./odyssey_repo || true
-# 	rsync -apP /tmp/odyssey/ ./odyssey_repo
+console:
+	psql -h 127.0.0.1 -p 6432 -U admin1 console
