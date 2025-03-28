@@ -1,5 +1,5 @@
 rsync:
-	./scripts/rsync.sh
+	. ./env && bash scripts/rsync.sh
 
 build_odyssey:
 # build_odyssey: get_repo

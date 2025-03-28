@@ -1,0 +1,4 @@
+export DST_IP="127.0.0.1"
+export DST_USER="user"
+export PRIV_KEY="${HOME}/.ssh/ssh_key"
+export DST_DIR="~/odyssey/group"

@@ -1,15 +1,22 @@
 #!/bin/bash
-DST_IP=""
-PRIV_KEY=""
-DST_DIR="~/odyssey/group"
 
 if [ "${DST_IP}" == "" ]; then
-    echo "define DST_IP var"
+    echo "define DST_IP env var"
     exit 1
 fi
 
 if [ "${PRIV_KEY}" == "" ]; then
-    echo "define PRIV_KEY var"
+    echo "define PRIV_KEY env var"
     exit 1
 fi
-rsync -apv -e "ssh -i ${PRIV_KEY}" --exclude ".git" ./ ${DST_IP}:${DST_DIR} --delete --delete-excluded
+
+if [ "${PRIV_KEY}" == "" ]; then
+    echo "define DST_USER env var"
+    exit 1
+fi
+
+rsync -apv -e "ssh -i ${PRIV_KEY}" \
+    --exclude ".git" \
+    --exclude ".gitignore" \
+    --exclude "scripts/rsync.sh" \
+    ./ ${DST_USER}@${DST_IP}:${DST_DIR} --delete --delete-excluded
