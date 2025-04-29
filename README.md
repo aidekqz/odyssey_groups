@@ -1,6 +1,11 @@
 # test odyssey groups
 ## prepare
 ```sh
+cp ./env_example ./env
+# vim ./env
+```
+## on vm
+```sh
 ./scripts/prepare_dep.sh
 ```
 ## run

@@ -15,6 +15,11 @@ if [ "${PRIV_KEY}" == "" ]; then
     exit 1
 fi
 
+if [ "${DST_DIR}" == "" ]; then
+    echo "define DST_DIR env var"
+    exit 1
+fi
+
 rsync -apv -e "ssh -i ${PRIV_KEY}" \
     --exclude ".git" \
     --exclude ".gitignore" \
