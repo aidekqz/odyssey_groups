@@ -36,6 +36,6 @@ RUN apt update && apt install -y --no-install-recommends \
 
 # COPY ./odyssey_repo /odyssey
 RUN git clone https://github.com/yandex/odyssey.git /odyssey
-workdir /odyssey
+WORKDIR /odyssey
 RUN sed -i 's/^BUILD_TYPE=Release/BUILD_TYPE=Debug/g' Makefile
 RUN make local_build
