@@ -1,6 +1,3 @@
-rsync:
-	. ./env && bash scripts/rsync.sh
-
 build_odyssey:
 	docker build -t test_odyssey:0.1 -f Dockerfile .
 
