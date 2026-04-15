@@ -12,5 +12,9 @@ bash scripts/prepare_dep.sh
 git clone https://github.com/yandex/odyssey.git odyssey
 cd odyssey
 make local_build
-ls ./build/sources/odyssey
+```
+## run pg and odyssey
+```sh
+make run_postgres
+./odyssey/build/sources/odyssey ./configs/base.conf
 ```
