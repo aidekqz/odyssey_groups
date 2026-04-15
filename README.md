@@ -1,16 +1,16 @@
 # test odyssey groups
-## prepare
+
+## prepare vm
+
 ```sh
-cp ./env_example ./env
-# vim ./env
+bash scripts/prepare_dep.sh
 ```
-## on vm
+
+## build odyssey
+
 ```sh
-./scripts/prepare_dep.sh
-```
-## run
-```sh
-make build_odyssey
-make run
-make run_test
+git clone https://github.com/yandex/odyssey.git odyssey
+cd odyssey
+make local_build
+ls ./build/sources/odyssey
 ```
