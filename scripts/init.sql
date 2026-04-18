@@ -6,6 +6,10 @@ ALTER ROLE postgres PASSWORD 'postgres123';
 -- CREATE ROLE group_checker WITH LOGIN PASSWORD 'group_checker123' SUPERUSER;
 -- CREATE ROLE auth_query_user WITH LOGIN PASSWORD 'auth_query_user123' SUPERUSER;
 CREATE DATABASE db1;
+CREATE DATABASE group_db;
 CREATE ROLE user1 WITH LOGIN PASSWORD 'user1123';
+CREATE USER group_user1 PASSWORD 'password1';
+
 CREATE ROLE group1;
 GRANT group1 TO user1;
+GRANT group1 TO group_user1;
