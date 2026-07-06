@@ -3,6 +3,7 @@ run_postgres:
 
 run_ldap:
 	./scripts/run_ldap_container.sh
+	./scripts/update_hosts_records.sh
 
 reload_odyssey:
 	kill -s HUP `pidof odyssey_bin`

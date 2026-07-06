@@ -1,5 +1,7 @@
 ALTER ROLE postgres PASSWORD 'postgres123';
 CREATE DATABASE db1;
 CREATE ROLE user1 WITH LOGIN PASSWORD 'user1123';
+-- used in ldap tests
+CREATE ROLE user2 WITH LOGIN PASSWORD '654321';
 CREATE ROLE group1;
 GRANT group1 TO user1;

@@ -14,7 +14,7 @@ docker run \
   -c password_encryption=md5 \
   -c log_min_error_statement=debug5
 
-until docker exec postgres pg_isready -U postgres; do sleep 1; done
+until docker exec postgres pg_isready -U postgres; do sleep 2; done
 
 psql "host=127.0.0.1 port=5432 user=postgres password=postgres123 dbname=postgres" \
   -f ./scripts/init.sql
