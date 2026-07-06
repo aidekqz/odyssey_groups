@@ -18,7 +18,7 @@ function prepapre_certs() {
 }
 
 function copy_files() {
-    docker cp ./configs/base.ldif openldap:/
+    docker cp ./configs/ldap_conf/base.ldif openldap:/
 }
 
 function init_data() {
