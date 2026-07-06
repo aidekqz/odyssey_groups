@@ -11,6 +11,7 @@ docker run \
   -d postgres:18.4 \
   -c log_connections=on \
   -c log_statement=all \
+  -c password_encryption=md5 \
   -c log_min_error_statement=debug5
 
 until docker exec postgres pg_isready -U postgres; do sleep 1; done

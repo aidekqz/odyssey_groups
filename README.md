@@ -9,10 +9,13 @@ bash scripts/prepare_dep.sh
 ## build odyssey
 
 ```sh
-git clone https://github.com/yandex/odyssey.git odyssey
+git submodule update
 cd odyssey
-make local_build
+# make local_build
 # make build_dbg
+make build_asan
+cp ./build/sources/odyssey ../odyssey_bin
+cd ..
 ```
 ## run pg and odyssey
 ```sh
