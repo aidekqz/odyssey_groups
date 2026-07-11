@@ -13,3 +13,4 @@ fi
 sudo sed -i "/$FQDN/d" /etc/hosts
 echo "$IP $FQDN" | sudo tee -a /etc/hosts
 echo "add record $IP $FQDN"
+
