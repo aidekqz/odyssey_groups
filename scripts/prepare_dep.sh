@@ -8,7 +8,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt install --yes \
     cmake \
     openssl \
     libssl-dev \
-    libldap-deb \
+    libldap-dev \
     gdb \
     tmux
 
