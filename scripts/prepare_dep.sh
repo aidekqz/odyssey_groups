@@ -6,6 +6,8 @@ sudo DEBIAN_FRONTEND=noninteractive apt install --yes \
     postgresql-client \
     make \
     cmake \
+    bison \
+    flex \
     openssl \
     libssl-dev \
     libldap-dev \

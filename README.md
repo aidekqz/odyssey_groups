@@ -6,10 +6,10 @@
 bash scripts/prepare_dep.sh
 ```
 
-## build odyssey
+## clone & build odyssey
 
 ```sh
-git submodule update
+git clone https://github.com/yandex/odyssey.git
 cd odyssey
 # make local_build
 # make build_dbg
