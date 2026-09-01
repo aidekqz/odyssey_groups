@@ -1,7 +1,8 @@
-#/bin/bash
-set -ex
-sudo apt update
-sudo DEBIAN_FRONTEND=noninteractive apt install --yes \
+#!/usr/bin/env bash
+set -euxo pipefail
+
+sudo apt-get update
+sudo env DEBIAN_FRONTEND=noninteractive apt-get install --yes \
     docker.io \
     postgresql-client \
     make \
@@ -14,4 +15,5 @@ sudo DEBIAN_FRONTEND=noninteractive apt install --yes \
     gdb \
     tmux
 
-sudo usermod -aG docker $USER && echo "NOW RELOGIN"
+sudo usermod -aG docker "${USER:?USER is not set}"
+echo "NOW RELOGIN"
