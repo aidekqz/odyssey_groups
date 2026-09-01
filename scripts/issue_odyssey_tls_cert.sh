@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Issue a local CA and an Odyssey server certificate for sslmode=verify-ca.
+# Issue a local CA and server certificate for the TLS-enabled base config.
 #
 # Usage: ./scripts/issue_odyssey_tls_cert.sh [--output DIR] [--force]
 
@@ -14,13 +14,19 @@ usage() {
 Использование: ./scripts/issue_odyssey_tls_cert.sh [--output DIR] [--force]
 
 Создаёт локальный CA и серверный сертификат Odyssey с SAN localhost и 127.0.0.1.
+TLS уже обязателен в configs/base.conf; при запуске базовой конфигурации
+каталог ./certs монтируется в контейнер как /etc/odyssey/certs.
+
 По умолчанию файлы помещаются в ./certs:
   ca.crt      корневой сертификат для параметра sslrootcert клиента
-  server.crt  сертификат сервера для tls_cert_file Odyssey
-  server.key  закрытый ключ сервера для tls_key_file Odyssey
+  server.crt  сертификат сервера Odyssey
+  server.key  закрытый ключ сервера Odyssey
 
 Скрипт не перезаписывает существующие файлы. Для перевыпуска сертификатов
 в том же каталоге передайте --force.
+
+Параметр --output полезен для выпуска сертификата в другой каталог, но для
+запуска configs/base.conf сертификаты должны находиться в ./certs.
 EOF
 }
 
@@ -116,10 +122,8 @@ chmod 644 "$OUTPUT_DIR/ca.crt" "$OUTPUT_DIR/server.crt"
 cat <<EOF
 Сертификаты выпущены в $OUTPUT_DIR
 
-Добавьте в блок listen Odyssey:
-    tls "require"
-    tls_key_file "$OUTPUT_DIR/server.key"
-    tls_cert_file "$OUTPUT_DIR/server.crt"
+TLS уже включён в configs/base.conf. Запустите Odyssey:
+    make run_odyssey ODYSSEY_CONFIG=base.conf
 
 Подключение клиента:
     psql "host=127.0.0.1 port=6432 dbname=db1 user=user1 sslmode=verify-ca sslrootcert=$OUTPUT_DIR/ca.crt"

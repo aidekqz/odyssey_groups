@@ -7,10 +7,27 @@ image_name="${ODYSSEY_IMAGE:-odyssey-local}"
 config_name="${ODYSSEY_CONFIG:-base.conf}"
 project_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 config_path="$project_dir/configs/$config_name"
+certs_path="$project_dir/certs"
+declare -a mount_args=(
+    -v "$config_path:/etc/odyssey/odyssey.conf:ro"
+)
+declare -a user_args=()
 
 if [[ ! -f "$config_path" ]]; then
     echo "Odyssey configuration does not exist: $config_path" >&2
     exit 1
+fi
+
+if [[ "$config_name" == "base.conf" ]] && [[ ! -f "$certs_path/server.crt" || ! -f "$certs_path/server.key" ]]; then
+    echo "TLS certificates are missing. Run '$project_dir/scripts/issue_odyssey_tls_cert.sh' first." >&2
+    exit 1
+fi
+
+if [[ "$config_name" == "base.conf" ]]; then
+    mount_args+=(-v "$certs_path:/etc/odyssey/certs:ro")
+    # The generated key is readable only by its host owner (mode 0600).
+    # Run as that user so Odyssey can read the bind-mounted key.
+    user_args=(--user "$(id -u):$(id -g)")
 fi
 
 if ! docker image inspect "$image_name" >/dev/null 2>&1; then
@@ -25,6 +42,7 @@ exec docker run \
     --name "$container_name" \
     --network "$network_name" \
     -p 127.0.0.1:6432:6432 \
-    -v "$config_path:/etc/odyssey/odyssey.conf:ro" \
+    "${mount_args[@]}" \
+    "${user_args[@]}" \
     -d "$image_name" \
     "/etc/odyssey/odyssey.conf"

@@ -31,6 +31,28 @@ make build_odyssey ODYSSEY_IMAGE=odyssey-local:debug
 make run_odyssey ODYSSEY_IMAGE=odyssey-local:debug ODYSSEY_CONFIG=config_ldap.conf
 ```
 
+## TLS в базовой конфигурации
+
+`configs/base.conf` принимает только TLS-подключения. Перед первым запуском
+выпустите локальный CA и сертификат сервера:
+
+```sh
+./scripts/issue_odyssey_tls_cert.sh
+make run_postgres
+make run_odyssey ODYSSEY_CONFIG=base.conf
+```
+
+`run_odyssey` монтирует каталог `./certs` в контейнер только для базовой
+конфигурации. Если сертификаты отсутствуют, запуск завершается с подсказкой
+выполнить скрипт выпуска. Подключитесь, доверив клиенту созданный CA:
+
+```sh
+psql "host=127.0.0.1 port=6432 dbname=postgres user=postgres sslmode=verify-ca sslrootcert=./certs/ca.crt"
+```
+
+Сертификат содержит SAN `localhost` и `127.0.0.1`; поэтому также можно
+использовать `sslmode=verify-full` с этими именами хоста.
+
 Полезные команды:
 
 ```sh

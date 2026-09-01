@@ -61,27 +61,31 @@
    make reload_odyssey
    ```
 
-### TLS для клиентского `sslmode=verify-ca`
+### TLS в базовой конфигурации
 
-Выпустите локальный CA и сертификат сервера (сценарий ничего не запускает):
+TLS обязателен для всех клиентских подключений в `configs/base.conf`. Перед
+первым запуском Base Config выпустите локальный CA и сертификат сервера:
 
 ```sh
 ./scripts/issue_odyssey_tls_cert.sh
+make run_postgres
+make run_odyssey ODYSSEY_CONFIG=base.conf
 ```
 
-Файлы появятся в `./certs/` и игнорируются Git. Добавьте в нужный блок `listen` следующие параметры:
-
-```conf
-tls "require"
-tls_key_file "./certs/server.key"
-tls_cert_file "./certs/server.crt"
-```
+Файлы появляются в `./certs/` и игнорируются Git. Скрипт `run_odyssey`
+проверяет наличие `server.crt` и `server.key` для `base.conf`, затем монтирует
+этот каталог в контейнер как `/etc/odyssey/certs` только для базовой
+конфигурации. Не добавляйте TLS-параметры вручную: они уже заданы в
+`configs/base.conf`.
 
 Клиент должен доверять созданному CA:
 
 ```sh
 psql "host=127.0.0.1 port=6432 dbname=db1 user=user1 sslmode=verify-ca sslrootcert=./certs/ca.crt"
 ```
+
+Сертификат содержит SAN `localhost` и `127.0.0.1`, поэтому с этими именами
+хоста можно применять и `sslmode=verify-full`.
 
 Не путайте клиентский `sslmode=verify-ca` с режимом `tls "verify_ca"` в Odyssey: второй требует клиентский сертификат, подписанный доверенным CA.
 
