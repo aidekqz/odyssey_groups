@@ -1,10 +1,17 @@
-#!/bin/bash
-set -ex
+#!/usr/bin/env bash
+set -euo pipefail
 
-docker rm --force postgres 2>/dev/null || true
+network_name="${NETWORK:-odyssey-net}"
+container_name="${POSTGRES_CONTAINER:-postgres}"
+project_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+NETWORK="$network_name" "$project_dir/scripts/ensure_docker_network.sh"
+docker rm --force "$container_name" 2>/dev/null || true
 
 docker run \
-  --name postgres \
+  --name "$container_name" \
+  --network "$network_name" \
+  --network-alias postgres \
   -e POSTGRES_PASSWORD=postgres123 \
   -e POSTGRES_HOST_AUTH_METHOD=md5 \
   -p 127.0.0.1:5432:5432 \
@@ -14,7 +21,7 @@ docker run \
   -c password_encryption=md5 \
   -c log_min_error_statement=debug5
 
-until docker exec postgres pg_isready -U postgres; do sleep 2; done
+until docker exec "$container_name" pg_isready -U postgres >/dev/null; do sleep 2; done
 
 psql "host=127.0.0.1 port=5432 user=postgres password=postgres123 dbname=postgres" \
-  -f ./scripts/init.sql
+  -f "$project_dir/scripts/init.sql"
