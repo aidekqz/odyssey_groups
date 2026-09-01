@@ -21,7 +21,18 @@ docker run \
   -c password_encryption=md5 \
   -c log_min_error_statement=debug5
 
-until docker exec "$container_name" pg_isready -U postgres >/dev/null; do sleep 2; done
+for ((attempt = 1; attempt <= 30; attempt++)); do
+  if docker exec "$container_name" pg_isready -U postgres >/dev/null 2>&1; then
+    break
+  fi
+  sleep 2
+done
+
+if ! docker exec "$container_name" pg_isready -U postgres >/dev/null 2>&1; then
+  echo "PostgreSQL did not become ready within 60 seconds" >&2
+  docker logs --tail 100 "$container_name" >&2 || true
+  exit 1
+fi
 
 psql "host=127.0.0.1 port=5432 user=postgres password=postgres123 dbname=postgres" \
   -f "$project_dir/scripts/init.sql"

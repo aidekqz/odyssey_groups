@@ -31,12 +31,22 @@ function init_data() {
     docker exec "$container_name" bash -c "ldapwhoami -x -D uid=user2,ou=people,dc=example,dc=local -w 654321"
 }
 
-function my_sleep() {
-    echo "sleep ${1}"
-    sleep "$1"
+function wait_for_ldap() {
+    for ((attempt = 1; attempt <= 30; attempt++)); do
+        if docker exec "$container_name" ldapwhoami -x \
+            -D cn=admin,dc=example,dc=local \
+            -w oD2quooDaimulaegei7w >/dev/null 2>&1; then
+            return 0
+        fi
+        sleep 2
+    done
+
+    echo "LDAP did not become ready within 60 seconds" >&2
+    docker logs --tail 100 "$container_name" >&2 || true
+    return 1
 }
 
 run_ldap
-my_sleep 4
+wait_for_ldap
 copy_files
 init_data
