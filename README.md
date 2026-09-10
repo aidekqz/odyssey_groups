@@ -12,6 +12,9 @@
   git clone https://github.com/yandex/odyssey.git odyssey
   ```
 
+`make build_odyssey` проверяет наличие `odyssey/Makefile` до запуска Docker и
+выведет эту команду, если checkout отсутствует или каталог пуст.
+
 ## Быстрый запуск сценария групп ролей
 
 ```sh
@@ -30,6 +33,46 @@ make run_odyssey ODYSSEY_CONFIG=base.conf
 make build_odyssey ODYSSEY_IMAGE=odyssey-local:debug
 make run_odyssey ODYSSEY_IMAGE=odyssey-local:debug ODYSSEY_CONFIG=config_ldap.conf
 ```
+
+## Core dumps Odyssey
+
+`make run_odyssey` запускает контейнер с неограниченным лимитом core и
+монтирует локальный каталог `./cores` в его рабочий каталог
+`/var/lib/odyssey/cores`. Поэтому дамп, созданный Odyssey при аварийном
+завершении, остаётся в `./cores` и после удаления или пересоздания контейнера.
+Основной образ собирается через portable-цель Odyssey `make local_build BUILD_TYPE=Debug` в
+режиме `Debug` и содержит отладочные символы и `gdb`; он используется и для
+обычного запуска, и для разбора core. Откройте
+дамп во временном контейнере из того же образа:
+
+```sh
+make gdb_core CORE=core.1234
+# в gdb: bt
+```
+
+Временный контейнер автоматически удаляется после выхода из `gdb`; core-файл
+остаётся на хосте. Локальный checkout `./odyssey` монтируется в GDB-контейнер
+только для чтения, поэтому доступны также строки исходного кода. Каталог
+игнорируется Git. Не пересобирайте или не перетегируйте образ между падением и
+разбором: бинарник GDB должен совпадать с тем, который создал core. Для
+отдельного сохранённого тега передайте одинаковое значение в обе команды:
+
+```sh
+make build_odyssey ODYSSEY_IMAGE=odyssey-local:debug-branch
+make run_odyssey ODYSSEY_IMAGE=odyssey-local:debug-branch
+make gdb_core ODYSSEY_IMAGE=odyssey-local:debug-branch CORE=core.1234
+```
+
+При необходимости укажите другое место для core:
+
+```sh
+make run_odyssey ODYSSEY_CORE_DIR=/absolute/path/to/cores
+```
+
+Это работает, когда `kernel.core_pattern` на Docker-хосте задаёт имя файла
+(например, `core` или `core.%p`). Если он начинается с `|`, ядро передаёт дамп
+в внешний обработчик (systemd-coredump, apport и т.п.), и место хранения
+определяет этот обработчик, а не контейнер.
 
 ## TLS в базовой конфигурации
 

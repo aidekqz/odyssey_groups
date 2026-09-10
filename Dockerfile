@@ -16,11 +16,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /src
 COPY odyssey/ ./
 
-RUN make build_release
+# local_build is Odyssey's portable build target.  In particular, older
+# checkouts do not provide the newer build_dbg target.
+RUN make local_build BUILD_TYPE=Debug
 
 FROM debian:trixie-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    gdb \
     libssl3 \
     libldap-dev \
     libpam0g \

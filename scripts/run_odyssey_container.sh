@@ -8,8 +8,15 @@ config_name="${ODYSSEY_CONFIG:-base.conf}"
 project_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 config_path="$project_dir/configs/$config_name"
 certs_path="$project_dir/certs"
+core_dir="${ODYSSEY_CORE_DIR:-$project_dir/cores}"
+
+if [[ "$core_dir" != /* ]]; then
+    core_dir="$project_dir/$core_dir"
+fi
+
 declare -a mount_args=(
     -v "$config_path:/etc/odyssey/odyssey.conf:ro"
+    -v "$core_dir:/var/lib/odyssey/cores"
 )
 declare -a user_args=()
 
@@ -35,12 +42,20 @@ if ! docker image inspect "$image_name" >/dev/null 2>&1; then
     exit 1
 fi
 
+mkdir -p "$core_dir"
+# The image normally runs as UID 1001, but base.conf uses the host UID so it
+# can read the TLS key.  Allow either process to create a dump in this local,
+# deliberately dedicated directory.
+chmod 1777 "$core_dir"
+
 NETWORK="$network_name" "$project_dir/scripts/ensure_docker_network.sh"
 docker rm --force "$container_name" >/dev/null 2>&1 || true
 
 exec docker run \
     --name "$container_name" \
     --network "$network_name" \
+    --ulimit core=-1 \
+    --workdir /var/lib/odyssey/cores \
     -p 127.0.0.1:6432:6432 \
     "${mount_args[@]}" \
     "${user_args[@]}" \
